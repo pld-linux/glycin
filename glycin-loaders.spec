@@ -28,6 +28,8 @@ Requires:	libheif >= 1.14.2
 Requires:	libjxl >= 0.8.2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%define		_debugsource_packages	0
+
 %description
 Glycin allows to decode images into gdk::Textures and to extract image
 metadata. The decoding happens in sandboxed modular image loaders.

@@ -1,12 +1,12 @@
 Summary:	Sandboxed image rendering
 Summary(pl.UTF-8):	Renderowanie obrazów w piaskownicy
 Name:		glycin-loaders
-Version:	0.1.2
+Version:	1.0.1
 Release:	1
 License:	MPL v2.0 or LGPL v2.1+
 Group:		Applications
-Source0:	https://download.gnome.org/sources/glycin-loaders/0.1/%{name}-%{version}.tar.xz
-# Source0-md5:	eef8925be5537cf2901e9d11feff0df2
+Source0:	https://download.gnome.org/sources/glycin-loaders/1.0/%{name}-%{version}.tar.xz
+# Source0-md5:	b4d7ad77a91f498385d21e16df81dea9
 URL:		https://gitlab.gnome.org/sophie-h/glycin
 BuildRequires:	cairo-devel >= 1.17.0
 BuildRequires:	cargo
@@ -14,6 +14,7 @@ BuildRequires:	glib2-devel >= 2.0
 BuildRequires:	gdk-pixbuf2-devel >= 2.0
 BuildRequires:	gtk4-devel >= 4.12.0
 BuildRequires:	libheif-devel >= 1.14.2
+BuildRequires:	libjxl-devel >= 0.8.2
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	meson >= 0.57
 BuildRequires:	ninja >= 1.5
@@ -24,6 +25,7 @@ BuildRequires:	rust
 Requires:	cairo >= 1.17.0
 Requires:	gtk4 >= 4.12.0
 Requires:	libheif >= 1.14.2
+Requires:	libjxl >= 0.8.2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -55,15 +57,15 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc NEWS LICENSE README.md
 %dir %{_libexecdir}/glycin-loaders
-%dir %{_libexecdir}/glycin-loaders/0+
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/0+/glycin-heif
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/0+/glycin-image-rs
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/0+/glycin-jxl
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/0+/glycin-svg
+%dir %{_libexecdir}/glycin-loaders/1+
+%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-heif
+%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-image-rs
+%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-jxl
+%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-svg
 %dir %{_datadir}/glycin-loaders
-%dir %{_datadir}/glycin-loaders/0+
-%dir %{_datadir}/glycin-loaders/0+/conf.d
-%{_datadir}/glycin-loaders/0+/conf.d/glycin-heif.conf
-%{_datadir}/glycin-loaders/0+/conf.d/glycin-image-rs.conf
-%{_datadir}/glycin-loaders/0+/conf.d/glycin-jxl.conf
-%{_datadir}/glycin-loaders/0+/conf.d/glycin-svg.conf
+%dir %{_datadir}/glycin-loaders/1+
+%dir %{_datadir}/glycin-loaders/1+/conf.d
+%{_datadir}/glycin-loaders/1+/conf.d/glycin-heif.conf
+%{_datadir}/glycin-loaders/1+/conf.d/glycin-image-rs.conf
+%{_datadir}/glycin-loaders/1+/conf.d/glycin-jxl.conf
+%{_datadir}/glycin-loaders/1+/conf.d/glycin-svg.conf

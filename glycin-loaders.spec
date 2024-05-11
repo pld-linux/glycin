@@ -43,7 +43,8 @@ wczytujących działających w piaskownicy.
 %setup -q
 
 %ifarch x32
-%{__sed} -i -e "/^cargo_options/ a '--target', 'x86_64-unknown-linux-gnux32'," loaders/meson.build
+%{__sed} -i -e "/^cargo_options/ a '--target', 'x86_64-unknown-linux-gnux32'," \
+	-e "s,/ rust_target /,/ 'x86_64-unknown-linux-gnux32' / rust_target /," loaders/meson.build
 %endif
 
 %build

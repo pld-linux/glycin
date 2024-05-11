@@ -2,7 +2,7 @@ Summary:	Sandboxed image rendering
 Summary(pl.UTF-8):	Renderowanie obrazów w piaskownicy
 Name:		glycin-loaders
 Version:	1.0.1
-Release:	1
+Release:	2
 License:	MPL v2.0 or LGPL v2.1+
 Group:		Applications
 Source0:	https://download.gnome.org/sources/glycin-loaders/1.0/%{name}-%{version}.tar.xz

@@ -21,7 +21,7 @@ BuildRequires:	ninja >= 1.5
 BuildRequires:	pango-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.736
-BuildRequires:	rust
+BuildRequires:	rust >= 1.75
 Requires:	cairo >= 1.17.0
 Requires:	gtk4 >= 4.12.0
 Requires:	libheif >= 1.14.2
@@ -41,6 +41,10 @@ wczytujących działających w piaskownicy.
 
 %prep
 %setup -q
+
+%ifarch x32
+%{__sed} -i -e "/^cargo_options/ a '--target', 'x86_64-unknown-linux-gnux32'," loaders/meson.build
+%endif
 
 %build
 %meson build

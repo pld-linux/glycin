@@ -2,11 +2,12 @@ Summary:	Sandboxed image rendering
 Summary(pl.UTF-8):	Renderowanie obrazów w piaskownicy
 Name:		glycin-loaders
 Version:	1.0.1
-Release:	2
+Release:	3
 License:	MPL v2.0 or LGPL v2.1+
 Group:		Applications
 Source0:	https://download.gnome.org/sources/glycin-loaders/1.0/%{name}-%{version}.tar.xz
 # Source0-md5:	b4d7ad77a91f498385d21e16df81dea9
+Patch0:		jxl-0.11.patch
 URL:		https://gitlab.gnome.org/sophie-h/glycin
 BuildRequires:	cairo-devel >= 1.17.0
 BuildRequires:	cargo
@@ -41,6 +42,7 @@ wczytujących działających w piaskownicy.
 
 %prep
 %setup -q
+%patch -P 0 -p1
 
 %ifarch x32
 %{__sed} -i -e "/^cargo_options/ a '--target', 'x86_64-unknown-linux-gnux32'," \

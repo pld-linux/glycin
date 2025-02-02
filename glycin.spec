@@ -1,13 +1,12 @@
 Summary:	Sandboxed image rendering
 Summary(pl.UTF-8):	Renderowanie obrazów w piaskownicy
-Name:		glycin-loaders
-Version:	1.0.1
-Release:	3
+Name:		glycin
+Version:	1.1.4
+Release:	0.1
 License:	MPL v2.0 or LGPL v2.1+
 Group:		Applications
-Source0:	https://download.gnome.org/sources/glycin-loaders/1.0/%{name}-%{version}.tar.xz
-# Source0-md5:	b4d7ad77a91f498385d21e16df81dea9
-Patch0:		jxl-0.11.patch
+Source0:	https://download.gnome.org/sources/glycin/1.1/%{name}-%{version}.tar.xz
+# Source0-md5:	4faccd31dbe4c2b223784ef20918fb74
 URL:		https://gitlab.gnome.org/sophie-h/glycin
 BuildRequires:	cairo-devel >= 1.17.0
 BuildRequires:	cargo
@@ -23,6 +22,7 @@ BuildRequires:	pango-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.736
 BuildRequires:	rust >= 1.75
+Obsoletes:	glycin-loaders < 1.1
 Requires:	cairo >= 1.17.0
 Requires:	gtk4 >= 4.12.0
 Requires:	libheif >= 1.14.2
@@ -42,7 +42,6 @@ wczytujących działających w piaskownicy.
 
 %prep
 %setup -q
-%patch -P 0 -p1
 
 %ifarch x32
 %{__sed} -i -e "/^cargo_options/ a '--target', 'x86_64-unknown-linux-gnux32'," \
@@ -71,16 +70,16 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc NEWS LICENSE README.md
-%dir %{_libexecdir}/glycin-loaders
-%dir %{_libexecdir}/glycin-loaders/1+
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-heif
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-image-rs
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-jxl
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-svg
-%dir %{_datadir}/glycin-loaders
-%dir %{_datadir}/glycin-loaders/1+
-%dir %{_datadir}/glycin-loaders/1+/conf.d
-%{_datadir}/glycin-loaders/1+/conf.d/glycin-heif.conf
-%{_datadir}/glycin-loaders/1+/conf.d/glycin-image-rs.conf
-%{_datadir}/glycin-loaders/1+/conf.d/glycin-jxl.conf
-%{_datadir}/glycin-loaders/1+/conf.d/glycin-svg.conf
+%dir %{_libexecdir}/glycin
+%dir %{_libexecdir}/glycin/1+
+%attr(755,root,root) %{_libexecdir}/glycin/1+/glycin-heif
+%attr(755,root,root) %{_libexecdir}/glycin/1+/glycin-image-rs
+%attr(755,root,root) %{_libexecdir}/glycin/1+/glycin-jxl
+%attr(755,root,root) %{_libexecdir}/glycin/1+/glycin-svg
+%dir %{_datadir}/glycin
+%dir %{_datadir}/glycin/1+
+%dir %{_datadir}/glycin/1+/conf.d
+%{_datadir}/glycin/1+/conf.d/glycin-heif.conf
+%{_datadir}/glycin/1+/conf.d/glycin-image-rs.conf
+%{_datadir}/glycin/1+/conf.d/glycin-jxl.conf
+%{_datadir}/glycin/1+/conf.d/glycin-svg.conf

@@ -127,10 +127,8 @@ wczytujących działających w piaskownicy.
 %prep
 %setup -q
 
-%ifarch x32
-%{__sed} -i -e "/^cargo_options/ a '--target', 'x86_64-unknown-linux-gnux32'," \
-	-e "s,/ rust_target /,/ 'x86_64-unknown-linux-gnux32' / rust_target /," loaders/meson.build
-%endif
+%{__sed} -i -e "/^cargo_options/ a '--target', '%{rust_target}'," \
+	-e "s,/ rust_target /,/ '%rust_target' / rust_target /," loaders/meson.build
 
 %build
 %ifarch x32

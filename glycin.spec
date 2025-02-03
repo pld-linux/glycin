@@ -124,7 +124,7 @@ wczytujących działających w piaskownicy.
 %prep
 %setup -q
 
-%{__sed} -i -e "/^cargo_options/ a '--target', '%{rust_target}'," \
+%{__sed} -i -e "/^cargo_options/ a '--verbose', '--target', '%{rust_target}'," \
 	-e "s,/ rust_target /,/ '%rust_target' / rust_target /," libglycin/meson.build loaders/meson.build
 
 %build

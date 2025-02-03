@@ -129,9 +129,7 @@ wczytujących działających w piaskownicy.
 	-e "s,/ rust_target /,/ '%rust_target' / rust_target /," libglycin/meson.build loaders/meson.build
 
 %build
-%ifarch x32
 export PKG_CONFIG_ALLOW_CROSS=1
-%endif
 export RUSTFLAGS="%{rpmrustflags}"
 %meson build \
 	-Dintrospection=false \

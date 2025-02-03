@@ -140,7 +140,7 @@ export PKG_CONFIG_ALLOW_CROSS=1
 	-Dintrospection=false \
 	-Dvapi=false
 
-%ninja_build -C build
+%meson_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -148,7 +148,7 @@ rm -rf $RPM_BUILD_ROOT
 %ifarch x32
 export PKG_CONFIG_ALLOW_CROSS=1
 %endif
-%ninja_install -C build
+%meson_install
 
 %clean
 rm -rf $RPM_BUILD_ROOT

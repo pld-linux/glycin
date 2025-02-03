@@ -12,16 +12,14 @@ URL:		https://gitlab.gnome.org/sophie-h/glycin
 BuildRequires:	cairo-devel >= 1.17.0
 BuildRequires:	cargo
 BuildRequires:	glib2-devel >= 1:2.60
-BuildRequires:	gdk-pixbuf2-devel >= 2.0
 BuildRequires:	gtk4-devel >= 4.12.0
 BuildRequires:	lcms2-devel >= 2.14
-BuildRequires:	libheif-devel >= 1.14.2
-BuildRequires:	libjxl-devel >= 0.8.2
+BuildRequires:	libheif-devel >= 1.17.0
+BuildRequires:	libjxl-devel >= 0.10.0
+BuildRequires:	librsvg-devel >= 2.52.0
 BuildRequires:	libseccomp-devel >= 2.5.0
-BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	meson >= 1.2
 BuildRequires:	ninja >= 1.5
-BuildRequires:	pango-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 2.038
 BuildRequires:	rust >= 1.77
@@ -110,8 +108,9 @@ Summary(pl.UTF-8):	Renderowanie obrazów w piaskownicy
 Group:		Applications/Graphics
 Requires:	cairo >= 1.17.0
 Requires:	gtk4 >= 4.12.0
-Requires:	libheif >= 1.14.2
-Requires:	libjxl >= 0.8.2
+Requires:	libheif >= 1.17.0
+Requires:	libjxl >= 0.10.0
+Requires:	librsvg >= 2.52.0
 
 %description loaders
 Glycin allows to decode images into gdk::Textures and to extract image

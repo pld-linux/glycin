@@ -23,7 +23,7 @@ BuildRequires:	meson >= 1.2
 BuildRequires:	ninja >= 1.5
 BuildRequires:	pango-devel
 BuildRequires:	pkgconfig
-BuildRequires:	rpmbuild(macros) >= 1.736
+BuildRequires:	rpmbuild(macros) >= 2.038
 BuildRequires:	rust >= 1.77
 Requires:	glib2 >= 1:2.60
 Requires:	lcms2 >= 2.14

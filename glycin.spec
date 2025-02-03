@@ -128,7 +128,7 @@ wczytujących działających w piaskownicy.
 %setup -q
 
 %{__sed} -i -e "/^cargo_options/ a '--target', '%{rust_target}'," \
-	-e "s,/ rust_target /,/ '%rust_target' / rust_target /," loaders/meson.build
+	-e "s,/ rust_target /,/ '%rust_target' / rust_target /," libglycin/meson.build loaders/meson.build
 
 %build
 %ifarch x32

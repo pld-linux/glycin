@@ -30,8 +30,6 @@ Requires:	lcms2 >= 2.14
 Requires:	libseccomp >= 2.5.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_debugsource_packages	0
-
 %description
 Glycin allows to decode images into gdk::Textures and to extract image
 metadata. The decoding happens in sandboxed modular image loaders.
@@ -134,6 +132,7 @@ wczytujących działających w piaskownicy.
 %ifarch x32
 export PKG_CONFIG_ALLOW_CROSS=1
 %endif
+export RUSTFLAGS="%{rpmrustflags}"
 %meson build \
 	-Dintrospection=false \
 	-Dvapi=false

@@ -1,4 +1,7 @@
-# TODO: introspection, vapi, capi_docs (there are some meson issues with fake library stubs)
+#
+# Conditional build:
+%bcond_without	apidocs	 # API documentation
+
 Summary:	Sandboxed and extendable image rendering
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy
 Name:		glycin
@@ -11,7 +14,9 @@ Source0:	https://download.gnome.org/sources/glycin/1.1/%{name}-%{version}.tar.xz
 URL:		https://gitlab.gnome.org/sophie-h/glycin
 BuildRequires:	cairo-devel >= 1.17.0
 BuildRequires:	cargo
+%{?with_apidocs:BuildRequires:	gi-docgen}
 BuildRequires:	glib2-devel >= 1:2.60
+BuildRequires:	gobject-introspection-devel
 BuildRequires:	gtk4-devel >= 4.12.0
 BuildRequires:	lcms2-devel >= 2.14
 BuildRequires:	libheif-devel >= 1.17.0
@@ -21,8 +26,12 @@ BuildRequires:	libseccomp-devel >= 2.5.0
 BuildRequires:	meson >= 1.2
 BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
-BuildRequires:	rpmbuild(macros) >= 2.038
+BuildRequires:	rpm-build >= 4.6
+BuildRequires:	rpmbuild(macros) >= 2.042
 BuildRequires:	rust >= 1.77
+BuildRequires:	tar >= 1:1.22
+BuildRequires:	vala
+BuildRequires:	xz
 Requires:	glib2 >= 1:2.60
 Requires:	lcms2 >= 2.14
 Requires:	libseccomp >= 2.5.0
@@ -64,6 +73,32 @@ Static glycin library.
 %description static -l pl.UTF-8
 Statyczna biblioteka glycin.
 
+%package -n vala-glycin
+Summary:	Vala API for glycin library
+Summary(pl.UTF-8):	API języka Vala do biblioteki glycin
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+Requires:	vala
+BuildArch:	noarch
+
+%description -n vala-glycin
+Vala API for glycin library.
+
+%description -n vala-glycin -l pl.UTF-8
+API języka Vala do biblioteki glycin.
+
+%package apidocs
+Summary:	API documentation for glycin library
+Summary(pl.UTF-8):	Dokumentacja API biblioteki glycin
+Group:		Documentation
+BuildArch:	noarch
+
+%description apidocs
+API documentation for glycin library.
+
+%description apidocs -l pl.UTF-8
+Dokumentacja API biblioteki glycin.
+
 %package gtk4
 Summary:	Sandboxed and extendable image decoding for GTK 4
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy dla GTK 4
@@ -102,6 +137,32 @@ Static glycin-gtk4 library.
 %description gtk4-static -l pl.UTF-8
 Statyczna biblioteka glycin-gtk4.
 
+%package -n vala-glycin-gtk4
+Summary:	Vala API for glycin-gtk4 library
+Summary(pl.UTF-8):	API języka Vala do biblioteki glycin-gtk4
+Group:		Development/Libraries
+Requires:	%{name}-gtk4-devel = %{version}-%{release}
+Requires:	vala-glycin = %{version}-%{release}
+BuildArch:	noarch
+
+%description -n vala-glycin-gtk4
+Vala API for glycin library.
+
+%description -n vala-glycin-gtk4 -l pl.UTF-8
+API języka Vala do biblioteki glycin.
+
+%package gtk4-apidocs
+Summary:	API documentation for glycin-gtk4 library
+Summary(pl.UTF-8):	Dokumentacja API biblioteki glycin-gtk4
+Group:		Documentation
+BuildArch:	noarch
+
+%description gtk4-apidocs
+API documentation for glycin-gtk4 library.
+
+%description gtk4-apidocs -l pl.UTF-8
+Dokumentacja API biblioteki glycin-gtk4.
+
 %package loaders
 Summary:	Sandboxed image rendering
 Summary(pl.UTF-8):	Renderowanie obrazów w piaskownicy
@@ -130,19 +191,29 @@ wczytujących działających w piaskownicy.
 %build
 export PKG_CONFIG_ALLOW_CROSS=1
 export RUSTFLAGS="%{rpmrustflags}"
-%meson build \
-	-Dintrospection=false \
-	-Dvapi=false
+%meson \
+	%{?with_apidocs:-Dcapi_docs=true}
+
+# There are some strange hacks with empty stub libraries for meson overwritten by rust libs.
+# Because of some mistaken dependency processing gir build fails after linking to empty stubs
+# instead of real libraries...
+# Workaround: ensure libs are overwritten by rust copies before further processing for gir.
+%meson_build libglycin/libglycin-copy-library
+
+%meson_build libglycin/libglycin-gtk4-copy-library
 
 %meson_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%ifarch x32
 export PKG_CONFIG_ALLOW_CROSS=1
-%endif
 %meson_install
+
+%if %{with apidocs}
+install -d $RPM_BUILD_ROOT%{_gidocdir}
+%{__mv} $RPM_BUILD_ROOT%{_docdir}/libglycin*-1 $RPM_BUILD_ROOT%{_gidocdir}
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -157,30 +228,56 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc NEWS LICENSE README.md
 %attr(755,root,root) %{_libdir}/libglycin-1.so.0
+%{_libdir}/girepository-1.0/Gly-1.typelib
 
 %files devel
 %defattr(644,root,root,755)
 %{_libdir}/libglycin-1.so
 %{_includedir}/glycin-1
+%{_datadir}/gir-1.0/Gly-1.gir
 %{_pkgconfigdir}/glycin-1.pc
 
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libglycin-1.a
 
+%files -n vala-glycin
+%defattr(644,root,root,755)
+%{_datadir}/vala/vapi/libglycin-1.deps
+%{_datadir}/vala/vapi/libglycin-1.vapi
+
+%if %{with apidocs}
+%files apidocs
+%defattr(644,root,root,755)
+%{_gidocdir}/libglycin-1
+%endif
+
 %files gtk4
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libglycin-gtk4-1.so.0
-%{_pkgconfigdir}/glycin-gtk4-1.pc
+%{_libdir}/girepository-1.0/GlyGtk4-1.typelib
 
 %files gtk4-devel
 %defattr(644,root,root,755)
 %{_libdir}/libglycin-gtk4-1.so
 %{_includedir}/glycin-gtk4-1
+%{_datadir}/gir-1.0/GlyGtk4-1.gir
+%{_pkgconfigdir}/glycin-gtk4-1.pc
 
 %files gtk4-static
 %defattr(644,root,root,755)
 %{_libdir}/libglycin-gtk4-1.a
+
+%files -n vala-glycin-gtk4
+%defattr(644,root,root,755)
+%{_datadir}/vala/vapi/libglycin-gtk4-1.deps
+%{_datadir}/vala/vapi/libglycin-gtk4-1.vapi
+
+%if %{with apidocs}
+%files gtk4-apidocs
+%defattr(644,root,root,755)
+%{_gidocdir}/libglycin-gtk4-1
+%endif
 
 %files loaders
 %defattr(644,root,root,755)

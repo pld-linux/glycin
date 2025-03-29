@@ -5,19 +5,19 @@
 Summary:	Sandboxed and extendable image rendering
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy
 Name:		glycin
-Version:	1.1.6
+Version:	1.2.0
 Release:	1
 License:	MPL v2.0 or LGPL v2.1+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/glycin/1.1/%{name}-%{version}.tar.xz
-# Source0-md5:	d429e711a6852b93d2baff61a73e09fb
+Source0:	https://download.gnome.org/sources/glycin/1.2/%{name}-%{version}.tar.xz
+# Source0-md5:	66aebd91e4ccef26b85195edda5e3f29
 URL:		https://gitlab.gnome.org/sophie-h/glycin
 BuildRequires:	cairo-devel >= 1.17.0
 BuildRequires:	cargo
 %{?with_apidocs:BuildRequires:	gi-docgen}
 BuildRequires:	glib2-devel >= 1:2.60
 BuildRequires:	gobject-introspection-devel
-BuildRequires:	gtk4-devel >= 4.12.0
+BuildRequires:	gtk4-devel >= 4.16.0
 BuildRequires:	lcms2-devel >= 2.14
 BuildRequires:	libheif-devel >= 1.17.0
 BuildRequires:	libjxl-devel >= 0.10.0
@@ -28,7 +28,8 @@ BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.042
-BuildRequires:	rust >= 1.77
+# base Cargo.toml specifies 1.80, but image-webp dependency has 1.80.1
+BuildRequires:	rust >= 1.80.1
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	vala
 BuildRequires:	xz
@@ -103,7 +104,7 @@ Dokumentacja API biblioteki glycin.
 Summary:	Sandboxed and extendable image decoding for GTK 4
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy dla GTK 4
 Group:		Libraries
-Requires:	gtk4 >= 4.12.0
+Requires:	gtk4 >= 4.16.0
 
 %description gtk4
 Sandboxed and extendable image decoding for GTK 4.
@@ -117,7 +118,7 @@ Summary(pl.UTF-8):	Plik nagłówkowy biblioteki glycin-gtk4
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 Requires:	%{name}-gtk4 = %{version}-%{release}
-Requires:	gtk4-devel >= 4.12.0
+Requires:	gtk4-devel >= 4.16.0
 
 %description gtk4-devel
 Header file for glycin-gtk4 library.
@@ -243,8 +244,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n vala-glycin
 %defattr(644,root,root,755)
-%{_datadir}/vala/vapi/libglycin-1.deps
-%{_datadir}/vala/vapi/libglycin-1.vapi
+%{_datadir}/vala/vapi/glycin-1.deps
+%{_datadir}/vala/vapi/glycin-1.vapi
 
 %if %{with apidocs}
 %files apidocs
@@ -270,8 +271,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n vala-glycin-gtk4
 %defattr(644,root,root,755)
-%{_datadir}/vala/vapi/libglycin-gtk4-1.deps
-%{_datadir}/vala/vapi/libglycin-gtk4-1.vapi
+%{_datadir}/vala/vapi/glycin-gtk4-1.deps
+%{_datadir}/vala/vapi/glycin-gtk4-1.vapi
 
 %if %{with apidocs}
 %files gtk4-apidocs

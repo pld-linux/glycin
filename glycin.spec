@@ -5,12 +5,12 @@
 Summary:	Sandboxed and extendable image rendering
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy
 Name:		glycin
-Version:	1.2.3
+Version:	1.2.4
 Release:	1
 License:	MPL v2.0 or LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.gnome.org/sources/glycin/1.2/%{name}-%{version}.tar.xz
-# Source0-md5:	9ac0579fc4027005be120f8eb773a6ff
+# Source0-md5:	897d30496e07740fbdb4a8f236da6eb4
 URL:		https://gitlab.gnome.org/sophie-h/glycin
 BuildRequires:	cairo-devel >= 1.17.0
 BuildRequires:	cargo

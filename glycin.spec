@@ -5,22 +5,26 @@
 Summary:	Sandboxed and extendable image rendering
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy
 Name:		glycin
-Version:	1.2.4
+Version:	2.0.0
 Release:	1
 License:	MPL v2.0 or LGPL v2.1+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/glycin/1.2/%{name}-%{version}.tar.xz
-# Source0-md5:	897d30496e07740fbdb4a8f236da6eb4
-URL:		https://gitlab.gnome.org/sophie-h/glycin
+Source0:	https://download.gnome.org/sources/glycin/2.0/%{name}-%{version}.tar.xz
+# Source0-md5:	f25308bac987c808b85d99dd582ca91f
+# cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2
+Source1:	%{name}-%{version}-vendor.tar.xz
+# Source1-md5:	da6b5ef1b59bc8067ede802d26cef4b4
+URL:		https://gitlab.gnome.org/GNOME/glycin
 BuildRequires:	cairo-devel >= 1.17.0
 BuildRequires:	cargo
+BuildRequires:	fontconfig-devel >= 1:2.13.0
 %{?with_apidocs:BuildRequires:	gi-docgen}
 BuildRequires:	glib2-devel >= 1:2.60
 BuildRequires:	gobject-introspection-devel
 BuildRequires:	gtk4-devel >= 4.16.0
 BuildRequires:	lcms2-devel >= 2.14
 BuildRequires:	libheif-devel >= 1.17.0
-BuildRequires:	libjxl-devel >= 0.10.0
+BuildRequires:	libjxl-devel >= 0.11.0
 BuildRequires:	librsvg-devel >= 2.52.0
 BuildRequires:	libseccomp-devel >= 2.5.0
 BuildRequires:	meson >= 1.2
@@ -28,11 +32,11 @@ BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.042
-# base Cargo.toml specifies 1.80, but image-webp dependency has 1.80.1
-BuildRequires:	rust >= 1.80.1
+BuildRequires:	rust >= 1.85
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	vala
 BuildRequires:	xz
+Requires:	fontconfig-libs >= 1:2.13.0
 Requires:	glib2 >= 1:2.60
 Requires:	lcms2 >= 2.14
 Requires:	libseccomp >= 2.5.0
@@ -171,7 +175,7 @@ Group:		Applications/Graphics
 Requires:	cairo >= 1.17.0
 Requires:	gtk4 >= 4.12.0
 Requires:	libheif >= 1.17.0
-Requires:	libjxl >= 0.10.0
+Requires:	libjxl >= 0.11.0
 Requires:	librsvg >= 2.52.0
 
 %description loaders
@@ -183,37 +187,67 @@ Glycin pozwala dekodować obrazy do obiektów gdk::Texture oraz
 wydobywać metadane z obrazów. Dekodowanie dzieje się w modułach
 wczytujących działających w piaskownicy.
 
+%package thumbnailer
+Summary:	Thumbnailer based on glycin-loaders
+Summary(pl.UTF-8):	Program do miniaturek obrazków oparty na glycin-loaders
+Group:		Applications/Graphics
+Requires:	%{name}-loaders = %{version}-%{release}
+
+%description thumbnailer
+Thumbnailer based on glycin-loaders.
+
+%description thumbnailer -l pl.UTF-8
+Program do miniaturek obrazków oparty na glycin-loaders.
+
 %prep
-%setup -q
+%setup -q -a1
 
 %{__sed} -i -e "/^cargo_options/ a '--verbose', '--target', '%{rust_target}'," \
-	-e "s,/ rust_target /,/ '%rust_target' / rust_target /," libglycin/meson.build loaders/meson.build
+	-e "s,/ rust_target /,/ '%rust_target' / rust_target /," glycin-loaders/meson.build libglycin/meson.build
+
+%{__sed} -i -e "/'build',/ a '--verbose', '--target', '%{rust_target}'," \
+	-e "s,/ rust_target /,/ '%rust_target' / rust_target /," glycin-thumbnailer/meson.build
+
+# use our offline registry
+export CARGO_HOME="$(pwd)/.cargo"
+
+mkdir -p "$CARGO_HOME"
+cat >.cargo/config.toml <<EOF
+[source.crates-io]
+replace-with = 'vendored-sources'
+
+[source.vendored-sources]
+directory = '$PWD/vendor'
+EOF
 
 %build
+export CARGO_HOME="$(pwd)/.cargo"
 export PKG_CONFIG_ALLOW_CROSS=1
 export RUSTFLAGS="%{rpmrustflags}"
 %meson \
-	%{?with_apidocs:-Dcapi_docs=true}
+	%{?with_apidocs:-Dcapi_docs=true} \
+	-Dloaders=glycin-heif,glycin-image-rs,glycin-jpeg2000,glycin-jxl,glycin-raw,glycin-svg
 
 # There are some strange hacks with empty stub libraries for meson overwritten by rust libs.
 # Because of some mistaken dependency processing gir build fails after linking to empty stubs
 # instead of real libraries...
 # Workaround: ensure libs are overwritten by rust copies before further processing for gir.
-%meson_build libglycin/libglycin-copy-library
+#meson_build libglycin/libglycin-copy-library
 
-%meson_build libglycin/libglycin-gtk4-copy-library
+#meson_build libglycin/libglycin-gtk4-copy-library
 
 %meson_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
+export CARGO_HOME="$(pwd)/.cargo"
 export PKG_CONFIG_ALLOW_CROSS=1
 %meson_install
 
 %if %{with apidocs}
 install -d $RPM_BUILD_ROOT%{_gidocdir}
-%{__mv} $RPM_BUILD_ROOT%{_docdir}/libglycin*-1 $RPM_BUILD_ROOT%{_gidocdir}
+%{__mv} $RPM_BUILD_ROOT%{_docdir}/libglycin*-2 $RPM_BUILD_ROOT%{_gidocdir}
 %endif
 
 %clean
@@ -228,71 +262,85 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc NEWS LICENSE README.md
-%attr(755,root,root) %{_libdir}/libglycin-1.so.0
-%{_libdir}/girepository-1.0/Gly-1.typelib
+%attr(755,root,root) %{_libdir}/libglycin-2.so.0
+%{_libdir}/girepository-1.0/Gly-2.typelib
 
 %files devel
 %defattr(644,root,root,755)
-%{_libdir}/libglycin-1.so
-%{_includedir}/glycin-1
-%{_datadir}/gir-1.0/Gly-1.gir
-%{_pkgconfigdir}/glycin-1.pc
+%{_libdir}/libglycin-2.so
+%{_includedir}/glycin-2
+%{_datadir}/gir-1.0/Gly-2.gir
+%{_pkgconfigdir}/glycin-2.pc
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/libglycin-1.a
+%{_libdir}/libglycin-2.a
 
 %files -n vala-glycin
 %defattr(644,root,root,755)
-%{_datadir}/vala/vapi/glycin-1.deps
-%{_datadir}/vala/vapi/glycin-1.vapi
+%{_datadir}/vala/vapi/glycin-2.deps
+%{_datadir}/vala/vapi/glycin-2.vapi
 
 %if %{with apidocs}
 %files apidocs
 %defattr(644,root,root,755)
-%{_gidocdir}/libglycin-1
+%{_gidocdir}/libglycin-2
 %endif
 
 %files gtk4
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libglycin-gtk4-1.so.0
-%{_libdir}/girepository-1.0/GlyGtk4-1.typelib
+%attr(755,root,root) %{_libdir}/libglycin-gtk4-2.so.0
+%{_libdir}/girepository-1.0/GlyGtk4-2.typelib
 
 %files gtk4-devel
 %defattr(644,root,root,755)
-%{_libdir}/libglycin-gtk4-1.so
-%{_includedir}/glycin-gtk4-1
-%{_datadir}/gir-1.0/GlyGtk4-1.gir
-%{_pkgconfigdir}/glycin-gtk4-1.pc
+%{_libdir}/libglycin-gtk4-2.so
+%{_includedir}/glycin-gtk4-2
+%{_datadir}/gir-1.0/GlyGtk4-2.gir
+%{_pkgconfigdir}/glycin-gtk4-2.pc
 
 %files gtk4-static
 %defattr(644,root,root,755)
-%{_libdir}/libglycin-gtk4-1.a
+%{_libdir}/libglycin-gtk4-2.a
 
 %files -n vala-glycin-gtk4
 %defattr(644,root,root,755)
-%{_datadir}/vala/vapi/glycin-gtk4-1.deps
-%{_datadir}/vala/vapi/glycin-gtk4-1.vapi
+%{_datadir}/vala/vapi/glycin-gtk4-2.deps
+%{_datadir}/vala/vapi/glycin-gtk4-2.vapi
 
 %if %{with apidocs}
 %files gtk4-apidocs
 %defattr(644,root,root,755)
-%{_gidocdir}/libglycin-gtk4-1
+%{_gidocdir}/libglycin-gtk4-2
 %endif
 
 %files loaders
 %defattr(644,root,root,755)
 %doc NEWS LICENSE README.md
 %dir %{_libexecdir}/glycin-loaders
-%dir %{_libexecdir}/glycin-loaders/1+
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-heif
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-image-rs
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-jxl
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/1+/glycin-svg
+%dir %{_libexecdir}/glycin-loaders/2+
+%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-heif
+%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-image-rs
+%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-jpeg2000
+%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-jxl
+%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-raw
+%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-svg
 %dir %{_datadir}/glycin-loaders
-%dir %{_datadir}/glycin-loaders/1+
-%dir %{_datadir}/glycin-loaders/1+/conf.d
-%{_datadir}/glycin-loaders/1+/conf.d/glycin-heif.conf
-%{_datadir}/glycin-loaders/1+/conf.d/glycin-image-rs.conf
-%{_datadir}/glycin-loaders/1+/conf.d/glycin-jxl.conf
-%{_datadir}/glycin-loaders/1+/conf.d/glycin-svg.conf
+%dir %{_datadir}/glycin-loaders/2+
+%dir %{_datadir}/glycin-loaders/2+/conf.d
+%{_datadir}/glycin-loaders/2+/conf.d/glycin-heif.conf
+%{_datadir}/glycin-loaders/2+/conf.d/glycin-image-rs.conf
+%{_datadir}/glycin-loaders/2+/conf.d/glycin-jpeg2000.conf
+%{_datadir}/glycin-loaders/2+/conf.d/glycin-jxl.conf
+%{_datadir}/glycin-loaders/2+/conf.d/glycin-raw.conf
+%{_datadir}/glycin-loaders/2+/conf.d/glycin-svg.conf
+
+%files thumbnailer
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/glycin-thumbnailer
+%{_datadir}/thumbnailers/glycin-heif.thumbnailer
+%{_datadir}/thumbnailers/glycin-image-rs.thumbnailer
+%{_datadir}/thumbnailers/glycin-jpeg2000.thumbnailer
+%{_datadir}/thumbnailers/glycin-jxl.thumbnailer
+%{_datadir}/thumbnailers/glycin-raw.thumbnailer
+%{_datadir}/thumbnailers/glycin-svg.thumbnailer

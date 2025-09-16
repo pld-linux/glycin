@@ -1,6 +1,12 @@
 #
 # Conditional build:
-%bcond_without	apidocs	 # API documentation
+%bcond_without	apidocs		# API documentation
+%bcond_without	gtk4		# GTK4 bindings
+%bcond_without	heif		# HEIF loader
+%bcond_without	jxl		# JPEG XL loader
+%bcond_without	svg		# SVG loader
+%bcond_without	static_libs	# static libraries
+%bcond_without	tests		# test suite
 
 Summary:	Sandboxed and extendable image rendering
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy
@@ -15,17 +21,19 @@ Source0:	https://download.gnome.org/sources/glycin/2.0/%{name}-%{version}.tar.xz
 Source1:	%{name}-%{version}-vendor.tar.xz
 # Source1-md5:	da6b5ef1b59bc8067ede802d26cef4b4
 URL:		https://gitlab.gnome.org/GNOME/glycin
-BuildRequires:	cairo-devel >= 1.17.0
+%{?with_svg:BuildRequires:	cairo-devel >= 1.17.0}
 BuildRequires:	cargo
 BuildRequires:	fontconfig-devel >= 1:2.13.0
 %{?with_apidocs:BuildRequires:	gi-docgen}
 BuildRequires:	glib2-devel >= 1:2.60
 BuildRequires:	gobject-introspection-devel
+%if %{with gtk4} || %{with tests}
 BuildRequires:	gtk4-devel >= 4.16.0
+%endif
 BuildRequires:	lcms2-devel >= 2.14
-BuildRequires:	libheif-devel >= 1.17.0
-BuildRequires:	libjxl-devel >= 0.11.0
-BuildRequires:	librsvg-devel >= 2.52.0
+%{?with_heif:BuildRequires:	libheif-devel >= 1.17.0}
+%{?with_jxl:BuildRequires:	libjxl-devel >= 0.11.0}
+%{?with_svg:BuildRequires:	librsvg-devel >= 2.52.0}
 BuildRequires:	libseccomp-devel >= 2.5.0
 BuildRequires:	meson >= 1.2
 BuildRequires:	ninja >= 1.5
@@ -172,11 +180,10 @@ Dokumentacja API biblioteki glycin-gtk4.
 Summary:	Sandboxed image rendering
 Summary(pl.UTF-8):	Renderowanie obrazów w piaskownicy
 Group:		Applications/Graphics
-Requires:	cairo >= 1.17.0
-Requires:	gtk4 >= 4.12.0
-Requires:	libheif >= 1.17.0
-Requires:	libjxl >= 0.11.0
-Requires:	librsvg >= 2.52.0
+%{?with_svg:Requires:	cairo >= 1.17.0}
+%{?with_heif:Requires:	libheif >= 1.17.0}
+%{?with_jxl:Requires:	libjxl >= 0.11.0}
+%{?with_svg:Requires:	librsvg >= 2.52.0}
 
 %description loaders
 Glycin allows to decode images into gdk::Textures and to extract image
@@ -225,8 +232,11 @@ export CARGO_HOME="$(pwd)/.cargo"
 export PKG_CONFIG_ALLOW_CROSS=1
 export RUSTFLAGS="%{rpmrustflags}"
 %meson \
+	%{!?with_static_libs:--default-library=shared} \
 	%{?with_apidocs:-Dcapi_docs=true} \
-	-Dloaders=glycin-heif,glycin-image-rs,glycin-jpeg2000,glycin-jxl,glycin-raw,glycin-svg
+	-Dloaders=glycin-image-rs,glycin-jpeg2000,glycin-raw%{?with_heif:,glycin-heif}%{?with_jxl:,glycin-jxl}%{?with_svg:,glycin-svg} \
+	-Dlibglycin-gtk4=%{__true_false gtk4} \
+	-Dtests=false
 
 # There are some strange hacks with empty stub libraries for meson overwritten by rust libs.
 # Because of some mistaken dependency processing gir build fails after linking to empty stubs
@@ -272,9 +282,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/gir-1.0/Gly-2.gir
 %{_pkgconfigdir}/glycin-2.pc
 
+%if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libglycin-2.a
+%endif
 
 %files -n vala-glycin
 %defattr(644,root,root,755)
@@ -287,6 +299,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_gidocdir}/libglycin-2
 %endif
 
+%if %{with gtk4}
 %files gtk4
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libglycin-gtk4-2.so.0
@@ -299,9 +312,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/gir-1.0/GlyGtk4-2.gir
 %{_pkgconfigdir}/glycin-gtk4-2.pc
 
+%if %{with static_libs}
 %files gtk4-static
 %defattr(644,root,root,755)
 %{_libdir}/libglycin-gtk4-2.a
+%endif
 
 %files -n vala-glycin-gtk4
 %defattr(644,root,root,755)
@@ -313,34 +328,35 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_gidocdir}/libglycin-gtk4-2
 %endif
+%endif
 
 %files loaders
 %defattr(644,root,root,755)
 %doc NEWS LICENSE README.md
 %dir %{_libexecdir}/glycin-loaders
 %dir %{_libexecdir}/glycin-loaders/2+
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-heif
+%{?with_heif:%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-heif}
 %attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-image-rs
 %attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-jpeg2000
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-jxl
+%{?with_jxl:%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-jxl}
 %attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-raw
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-svg
+%{?with_svg:%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-svg}
 %dir %{_datadir}/glycin-loaders
 %dir %{_datadir}/glycin-loaders/2+
 %dir %{_datadir}/glycin-loaders/2+/conf.d
-%{_datadir}/glycin-loaders/2+/conf.d/glycin-heif.conf
+%{?with_heif:%{_datadir}/glycin-loaders/2+/conf.d/glycin-heif.conf}
 %{_datadir}/glycin-loaders/2+/conf.d/glycin-image-rs.conf
 %{_datadir}/glycin-loaders/2+/conf.d/glycin-jpeg2000.conf
-%{_datadir}/glycin-loaders/2+/conf.d/glycin-jxl.conf
+%{?with_jxl:%{_datadir}/glycin-loaders/2+/conf.d/glycin-jxl.conf}
 %{_datadir}/glycin-loaders/2+/conf.d/glycin-raw.conf
-%{_datadir}/glycin-loaders/2+/conf.d/glycin-svg.conf
+%{?with_svg:%{_datadir}/glycin-loaders/2+/conf.d/glycin-svg.conf}
 
 %files thumbnailer
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/glycin-thumbnailer
-%{_datadir}/thumbnailers/glycin-heif.thumbnailer
+%{?with_heif:%{_datadir}/thumbnailers/glycin-heif.thumbnailer}
 %{_datadir}/thumbnailers/glycin-image-rs.thumbnailer
 %{_datadir}/thumbnailers/glycin-jpeg2000.thumbnailer
-%{_datadir}/thumbnailers/glycin-jxl.thumbnailer
+%{?with_jxl:%{_datadir}/thumbnailers/glycin-jxl.thumbnailer}
 %{_datadir}/thumbnailers/glycin-raw.thumbnailer
-%{_datadir}/thumbnailers/glycin-svg.thumbnailer
+%{?with_svg:%{_datadir}/thumbnailers/glycin-svg.thumbnailer}

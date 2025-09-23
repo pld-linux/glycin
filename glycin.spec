@@ -12,7 +12,7 @@ Summary:	Sandboxed and extendable image rendering
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy
 Name:		glycin
 Version:	2.0.0
-Release:	2
+Release:	3
 License:	MPL v2.0 or LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.gnome.org/sources/glycin/2.0/%{name}-%{version}.tar.xz

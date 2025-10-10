@@ -39,11 +39,12 @@ BuildRequires:	meson >= 1.2
 BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.6
-BuildRequires:	rpmbuild(macros) >= 2.042
+BuildRequires:	rpmbuild(macros) >= 2.050
 BuildRequires:	rust >= 1.85
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	vala
 BuildRequires:	xz
+%{?rust_req}
 Requires:	fontconfig-libs >= 1:2.13.0
 Requires:	glib2 >= 1:2.60
 Requires:	lcms2 >= 2.14
@@ -116,6 +117,7 @@ Dokumentacja API biblioteki glycin.
 Summary:	Sandboxed and extendable image decoding for GTK 4
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy dla GTK 4
 Group:		Libraries
+%{?rust_req}
 Requires:	gtk4 >= 4.16.0
 
 %description gtk4
@@ -180,6 +182,7 @@ Dokumentacja API biblioteki glycin-gtk4.
 Summary:	Sandboxed image rendering
 Summary(pl.UTF-8):	Renderowanie obrazów w piaskownicy
 Group:		Applications/Graphics
+%{?rust_req}
 Requires:	bubblewrap
 %{?with_svg:Requires:	cairo >= 1.17.0}
 %{?with_heif:Requires:	libheif >= 1.17.0}
@@ -200,6 +203,7 @@ Summary:	Thumbnailer based on glycin-loaders
 Summary(pl.UTF-8):	Program do miniaturek obrazków oparty na glycin-loaders
 Group:		Applications/Graphics
 Requires:	%{name}-loaders = %{version}-%{release}
+%{?rust_req}
 
 %description thumbnailer
 Thumbnailer based on glycin-loaders.

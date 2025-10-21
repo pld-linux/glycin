@@ -45,10 +45,10 @@ BuildRequires:	tar >= 1:1.22
 BuildRequires:	vala
 BuildRequires:	xz
 %{?rust_req}
-Requires:	fontconfig-libs >= 1:2.13.0
-Requires:	glib2 >= 1:2.60
-Requires:	lcms2 >= 2.14
-Requires:	libseccomp >= 2.5.0
+Requires:	fontconfig-libs%{?_isa} >= 1:2.13.0
+Requires:	glib2%{?_isa} >= 1:2.60
+Requires:	lcms2%{?_isa} >= 2.14
+Requires:	libseccomp%{?_isa} >= 2.5.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -64,10 +64,10 @@ wczytujących działających w piaskownicy.
 Summary:	Header file for glycin library
 Summary(pl.UTF-8):	Plik nagłówkowy biblioteki glycin
 Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.60
-Requires:	lcms2-devel >= 2.14
-Requires:	libseccomp-devel >= 2.5.0
+Requires:	%{name}%{?_isa} = %{version}-%{release}
+Requires:	glib2-devel%{?_isa} >= 1:2.60
+Requires:	lcms2-devel%{?_isa} >= 2.14
+Requires:	libseccomp-devel%{?_isa} >= 2.5.0
 
 %description devel
 Header file for glycin library.
@@ -79,7 +79,7 @@ Plik nagłówkowy biblioteki glycin.
 Summary:	Static glycin library
 Summary(pl.UTF-8):	Statyczna biblioteka glycin
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-devel%{?_isa} = %{version}-%{release}
 
 %description static
 Static glycin library.
@@ -118,7 +118,7 @@ Summary:	Sandboxed and extendable image decoding for GTK 4
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy dla GTK 4
 Group:		Libraries
 %{?rust_req}
-Requires:	gtk4 >= 4.16.0
+Requires:	gtk4%{?_isa} >= 4.16.0
 
 %description gtk4
 Sandboxed and extendable image decoding for GTK 4.
@@ -130,9 +130,9 @@ Rozszerzalne renderowanie obrazów w piaskownicy dla GTK 4.
 Summary:	Header file for glycin-gtk4 library
 Summary(pl.UTF-8):	Plik nagłówkowy biblioteki glycin-gtk4
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
-Requires:	%{name}-gtk4 = %{version}-%{release}
-Requires:	gtk4-devel >= 4.16.0
+Requires:	%{name}-devel%{?_isa} = %{version}-%{release}
+Requires:	%{name}-gtk4%{?_isa} = %{version}-%{release}
+Requires:	gtk4-devel%{?_isa} >= 4.16.0
 
 %description gtk4-devel
 Header file for glycin-gtk4 library.
@@ -144,7 +144,7 @@ Plik nagłówkowy biblioteki glycin-gtk4.
 Summary:	Static glycin-gtk4 library
 Summary(pl.UTF-8):	Statyczna biblioteka glycin-gtk4
 Group:		Development/Libraries
-Requires:	%{name}-gtk4-devel = %{version}-%{release}
+Requires:	%{name}-gtk4-devel%{?_isa} = %{version}-%{release}
 
 %description gtk4-static
 Static glycin-gtk4 library.
@@ -184,10 +184,10 @@ Summary(pl.UTF-8):	Renderowanie obrazów w piaskownicy
 Group:		Applications/Graphics
 %{?rust_req}
 Requires:	bubblewrap
-%{?with_svg:Requires:	cairo >= 1.17.0}
-%{?with_heif:Requires:	libheif >= 1.17.0}
-%{?with_jxl:Requires:	libjxl >= 0.11.0}
-%{?with_svg:Requires:	librsvg >= 2.52.0}
+%{?with_svg:Requires:	cairo%{?_isa} >= 1.17.0}
+%{?with_heif:Requires:	libheif%{?_isa} >= 1.17.0}
+%{?with_jxl:Requires:	libjxl%{?_isa} >= 0.11.0}
+%{?with_svg:Requires:	librsvg%{?_isa} >= 2.52.0}
 
 %description loaders
 Glycin allows to decode images into gdk::Textures and to extract image

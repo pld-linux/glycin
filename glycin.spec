@@ -11,18 +11,18 @@
 Summary:	Sandboxed and extendable image rendering
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy
 Name:		glycin
-Version:	2.0.8
+Version:	2.1.0
 Release:	1
 License:	MPL v2.0 or LGPL v2.1+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/glycin/2.0/%{name}-%{version}.tar.xz
-# Source0-md5:	7f8fac31be0aabd50a44998d9fd4ede2
+Source0:	https://download.gnome.org/sources/glycin/2.1/%{name}-%{version}.tar.xz
+# Source0-md5:	6d52853c5ca5eb971b4e213130b07e0e
 # cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2
 Source1:	%{name}-%{version}-vendor.tar.xz
-# Source1-md5:	4fde3c2e0481c0ed77422e34cea3bbca
+# Source1-md5:	92af3bc1ab4cede533a3587e03a58bc2
 URL:		https://gitlab.gnome.org/GNOME/glycin
 %{?with_svg:BuildRequires:	cairo-devel >= 1.17.0}
-BuildRequires:	cargo
+BuildRequires:	cargo >= 1.92
 BuildRequires:	fontconfig-devel >= 1:2.13.0
 %{?with_apidocs:BuildRequires:	gi-docgen}
 BuildRequires:	glib2-devel >= 1:2.60
@@ -32,7 +32,7 @@ BuildRequires:	gtk4-devel >= 4.16.0
 %endif
 BuildRequires:	lcms2-devel >= 2.14
 %{?with_heif:BuildRequires:	libheif-devel >= 1.17.0}
-%{?with_jxl:BuildRequires:	libjxl-devel >= 0.11.0}
+%{?with_jxl:BuildRequires:	libjxl-devel >= 0.11.1}
 %{?with_svg:BuildRequires:	librsvg-devel >= 2.52.0}
 BuildRequires:	libseccomp-devel >= 2.5.0
 BuildRequires:	meson >= 1.2
@@ -40,7 +40,7 @@ BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.050
-BuildRequires:	rust >= 1.85
+BuildRequires:	rust >= 1.92
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	vala
 BuildRequires:	xz
@@ -186,7 +186,7 @@ Group:		Applications/Graphics
 Requires:	bubblewrap
 %{?with_svg:Requires:	cairo%{?_isa} >= 1.17.0}
 %{?with_heif:Requires:	libheif%{?_isa} >= 1.17.0}
-%{?with_jxl:Requires:	libjxl%{?_isa} >= 0.11.0}
+%{?with_jxl:Requires:	libjxl%{?_isa} >= 0.11.1}
 %{?with_svg:Requires:	librsvg%{?_isa} >= 2.52.0}
 
 %description loaders
@@ -239,7 +239,7 @@ export RUSTFLAGS="%{rpmrustflags}"
 %meson \
 	%{!?with_static_libs:--default-library=shared} \
 	%{?with_apidocs:-Dcapi_docs=true} \
-	-Dloaders=glycin-image-rs,glycin-jpeg2000,glycin-raw%{?with_heif:,glycin-heif}%{?with_jxl:,glycin-jxl}%{?with_svg:,glycin-svg} \
+	-Dloaders=glycin-image-rs,glycin-raw%{?with_heif:,glycin-heif}%{?with_jxl:,glycin-jxl}%{?with_svg:,glycin-svg} \
 	-Dlibglycin-gtk4=%{__true_false gtk4} \
 	-Dtests=false
 
@@ -342,7 +342,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libexecdir}/glycin-loaders/2+
 %{?with_heif:%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-heif}
 %attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-image-rs
-%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-jpeg2000
 %{?with_jxl:%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-jxl}
 %attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-raw
 %{?with_svg:%attr(755,root,root) %{_libexecdir}/glycin-loaders/2+/glycin-svg}
@@ -351,7 +350,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/glycin-loaders/2+/conf.d
 %{?with_heif:%{_datadir}/glycin-loaders/2+/conf.d/glycin-heif.conf}
 %{_datadir}/glycin-loaders/2+/conf.d/glycin-image-rs.conf
-%{_datadir}/glycin-loaders/2+/conf.d/glycin-jpeg2000.conf
 %{?with_jxl:%{_datadir}/glycin-loaders/2+/conf.d/glycin-jxl.conf}
 %{_datadir}/glycin-loaders/2+/conf.d/glycin-raw.conf
 %{?with_svg:%{_datadir}/glycin-loaders/2+/conf.d/glycin-svg.conf}
@@ -361,7 +359,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/glycin-thumbnailer
 %{?with_heif:%{_datadir}/thumbnailers/glycin-heif.thumbnailer}
 %{_datadir}/thumbnailers/glycin-image-rs.thumbnailer
-%{_datadir}/thumbnailers/glycin-jpeg2000.thumbnailer
 %{?with_jxl:%{_datadir}/thumbnailers/glycin-jxl.thumbnailer}
 %{_datadir}/thumbnailers/glycin-raw.thumbnailer
 %{?with_svg:%{_datadir}/thumbnailers/glycin-svg.thumbnailer}

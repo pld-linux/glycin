@@ -11,15 +11,15 @@
 Summary:	Sandboxed and extendable image rendering
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy
 Name:		glycin
-Version:	2.1.0
+Version:	2.1.1
 Release:	1
 License:	MPL v2.0 or LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.gnome.org/sources/glycin/2.1/%{name}-%{version}.tar.xz
-# Source0-md5:	6d52853c5ca5eb971b4e213130b07e0e
+# Source0-md5:	411550c5da777a952bb6c811fd882156
 # cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2
 Source1:	%{name}-%{version}-vendor.tar.xz
-# Source1-md5:	92af3bc1ab4cede533a3587e03a58bc2
+# Source1-md5:	0a9a2dbf8840c6d3ec0859f7deacba00
 URL:		https://gitlab.gnome.org/GNOME/glycin
 %{?with_svg:BuildRequires:	cairo-devel >= 1.17.0}
 BuildRequires:	cargo >= 1.92
@@ -277,7 +277,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc NEWS LICENSE README.md
-%attr(755,root,root) %{_libdir}/libglycin-2.so.0
+%{_libdir}/libglycin-2.so.0
 %{_libdir}/girepository-1.0/Gly-2.typelib
 
 %files devel
@@ -307,7 +307,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with gtk4}
 %files gtk4
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libglycin-gtk4-2.so.0
+%{_libdir}/libglycin-gtk4-2.so.0
 %{_libdir}/girepository-1.0/GlyGtk4-2.typelib
 
 %files gtk4-devel

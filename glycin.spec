@@ -24,6 +24,7 @@ URL:		https://gitlab.gnome.org/GNOME/glycin
 %{?with_svg:BuildRequires:	cairo-devel >= 1.17.0}
 BuildRequires:	cargo >= 1.92
 BuildRequires:	fontconfig-devel >= 1:2.13.0
+BuildRequires:	gettext-tools
 %{?with_apidocs:BuildRequires:	gi-docgen}
 BuildRequires:	glib2-devel >= 1:2.60
 BuildRequires:	gobject-introspection-devel

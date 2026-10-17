@@ -11,16 +11,16 @@
 Summary:	Sandboxed and extendable image rendering
 Summary(pl.UTF-8):	Rozszerzalne renderowanie obrazów w piaskownicy
 Name:		glycin
-Version:	2.1.5
-%define	crates_version	2.1.1
+Version:	2.2.3
+%define	crates_version	%{version}
 Release:	1
 License:	MPL v2.0 or LGPL v2.1+
 Group:		Libraries
-Source0:	https://download.gnome.org/sources/glycin/2.1/%{name}-%{version}.tar.xz
-# Source0-md5:	d9224a846ad1ed964d07e1ebb48d4458
+Source0:	https://download.gnome.org/sources/glycin/2.2/%{name}-%{version}.tar.xz
+# Source0-md5:	eb55aa5446c20a1e1b4963829aeeb46e
 # cargo vendor-filterer --platform='*-unknown-linux-*' --tier=2
 Source1:	%{name}-%{crates_version}-vendor.tar.xz
-# Source1-md5:	0a9a2dbf8840c6d3ec0859f7deacba00
+# Source1-md5:	e51a7ffb2d820ba7f96f9440ded83d22
 URL:		https://gitlab.gnome.org/GNOME/glycin
 %{?with_svg:BuildRequires:	cairo-devel >= 1.17.0}
 BuildRequires:	cargo >= 1.92
@@ -32,8 +32,7 @@ BuildRequires:	gobject-introspection-devel
 %if %{with gtk4} || %{with tests}
 BuildRequires:	gtk4-devel >= 4.16.0
 %endif
-BuildRequires:	lcms2-devel >= 2.14
-%{?with_heif:BuildRequires:	libheif-devel >= 1.17.0}
+%{?with_heif:BuildRequires:	libheif-devel >= 1.20.0}
 %{?with_jxl:BuildRequires:	libjxl-devel >= 0.11.1}
 %{?with_svg:BuildRequires:	librsvg-devel >= 2.52.0}
 BuildRequires:	libseccomp-devel >= 2.5.0
@@ -42,14 +41,13 @@ BuildRequires:	ninja >= 1.5
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.050
-BuildRequires:	rust >= 1.92
+BuildRequires:	rust >= 1.93
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	vala
 BuildRequires:	xz
 %{?rust_req}
 Requires:	fontconfig-libs%{?_isa} >= 1:2.13.0
 Requires:	glib2%{?_isa} >= 1:2.60
-Requires:	lcms2%{?_isa} >= 2.14
 Requires:	libseccomp%{?_isa} >= 2.5.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -68,7 +66,6 @@ Summary(pl.UTF-8):	Plik nagłówkowy biblioteki glycin
 Group:		Development/Libraries
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 Requires:	glib2-devel%{?_isa} >= 1:2.60
-Requires:	lcms2-devel%{?_isa} >= 2.14
 Requires:	libseccomp-devel%{?_isa} >= 2.5.0
 
 %description devel
@@ -187,7 +184,7 @@ Group:		Applications/Graphics
 %{?rust_req}
 Requires:	bubblewrap
 %{?with_svg:Requires:	cairo%{?_isa} >= 1.17.0}
-%{?with_heif:Requires:	libheif%{?_isa} >= 1.17.0}
+%{?with_heif:Requires:	libheif%{?_isa} >= 1.20.0}
 %{?with_jxl:Requires:	libjxl%{?_isa} >= 0.11.1}
 %{?with_svg:Requires:	librsvg%{?_isa} >= 2.52.0}
 
